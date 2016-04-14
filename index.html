@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content=""><title>Youtube to MP3 Converter</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="Instantly download a song from a youtube video in mp3 format with the correct album artwork, artist name, title and other useful metadata about the track.">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css">
+		<link rel="stylesheet" href="https://bootswatch.com/cosmo/bootstrap.min.css">
+		<style>
+			body { margin: 2% 0; background-color: #f8f8f8; }
+			.container { margin: 0 auto !important; display: block; }
+			.inner-content { padding-right: 0 !important; }
+			.col-centered{ float: none; margin: 0 auto; }
+			.col-md-8.col-centered { padding: 0px; }
+			.metadata-cover { padding: 0px; max-width: 100%; }
+			.panel { margin: 25px auto; }
+			.btn-convert, .btn-download { margin-top: 15px; }
+			.invalid-link { margin-bottom: 15px; }
+			.form-group { margin-bottom: 0; }
+			label.control-label { margin-top: 10px; }
+			@media (max-width: 990px) { 
+				.inner-content { padding-left: 0 !important; } 
+				.advertisement { max-height: 250px } 
+				.metadata-cover-thumb { max-width: 80px; min-width: 75px; margin: auto; }
+			}
+		</style>
+
+		<!--[if IE]>
+		<script src="https://cdn.jsdelivr.net/html5shiv/3.7.2/html5shiv.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="container">
+			<div class="left col-md-3">
+				<div class="advertisement panel panel-default">
+					<div class="visible-md-* visible-lg-* panel-body">
+						<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+						<!-- MP3YT - LEFT -->
+						<ins class="adsbygoogle"
+							 style="display:block"
+							 data-ad-client="ca-pub-4589687512106971"
+							 data-ad-slot="6669930708"
+							 data-ad-format="auto"></ins>
+						<script>
+							(adsbygoogle = window.adsbygoogle || []).push({});
+						</script>
+					</div>
+				</div>							
+			</div>
+			<div class="middle col-md-6">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<p>This is a free online service for getting the mp3 audio from a youtube video. We search online to find the correct album artwork, track title and artists so we can tag your mp3 file with the correct ID3 tags. You can then confirm the metadata and edit anything incorrect before downloading the file directly to your device.</p>
+					</div>
+				</div>
+				<div id="step1" class="panel panel-default">
+					<div class="panel-body">
+						<div class="invalid-link alert alert-danger" style="display: none;">
+							<strong>Invalid Link!</strong> You need to paste the full youtube url.
+						</div>
+						<div class="form-group">
+							<input class="form-control youtube-url" type="text" placeholder="Paste a youtube video url...">
+							<a class="btn btn-primary btn-block btn-convert">Convert Track</a>
+						</div>
+					</div>
+				</div>
+				<div id="step2" class="panel panel-default" style="display: none;">
+					<div class="panel-body">
+						<div class="list-group list-metadata"></div>
+						<form id="download-form" method="post">
+							<img class="metadata-cover col-md-5" src="downloads/artwork/unknown.jpg">
+							<div class="inner-content col-md-7">
+								<div class="form-group">
+									<label class="control-label" for="focusedInput">Title</label>
+									<input class="form-control input-sm metadata-title" name="title" type="text">
+								</div>
+								<div class="form-group">
+									<label class="control-label" for="focusedInput">Album</label>
+									<input class="form-control input-sm metadata-album" name="album" type="text">
+								</div>
+								<div class="form-group">
+									<label class="control-label" for="focusedInput">Artist</label>
+									<input class="form-control input-sm metadata-artist" name="artist" type="text">
+								</div>
+							</div>
+							<div class="clearfix"></div>
+							<input class="form-control input-sm metadata-cover-field hidden" name="cover" type="text">
+							<a class="btn btn-primary btn-block btn-download">Download</a>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="right col-md-3">
+				<div class="advertisement panel panel-default">
+					<div class="visible-md-* visible-lg-* panel-body">
+						<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+						<!-- MP3YT - RIGHT -->
+						<ins class="adsbygoogle"
+							 style="display:block"
+							 data-ad-client="ca-pub-4589687512106971"
+							 data-ad-slot="8007063100"
+							 data-ad-format="auto"></ins>
+						<script>
+							(adsbygoogle = window.adsbygoogle || []).push({});
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$(".btn-convert").on("click", function() {
+					$("#step2").slideUp();
+					$(".list-metadata").html("");
+					if(!getValidUrl($(".youtube-url").val())) {
+						$(".youtube-url").parent().addClass("has-error");
+						$(".invalid-link").slideDown();
+					} else {
+						convertVideo(getValidUrl($(".youtube-url").val()));
+						$(".invalid-link").slideUp();
+						$(".youtube-url").parent().removeClass("has-error");
+						$(this).addClass("disabled");
+						$(".youtube-url").addClass("disabled");
+						$(this).html("<i class='fa fa-refresh fa-spin'></i>");
+					}
+				});
+
+				$(".btn-download").on("click", function() {
+					$("#download-form").submit();
+				});
+				
+				$(".list-metadata").on("click", ".list-group-item", function(event) {
+					console.log(this);
+					setMetadataForm(
+						$(this).attr("data-title"),
+						$(this).attr("data-artist"),
+						$(this).attr("data-album"),
+						$(this).attr("data-cover")
+					);
+					$(".list-group-item").each(function() {
+						$(this).find(".badge").html("");
+					});
+					$(this).find(".badge").html('<i class="fa fa-check"></i>');
+					event.preventDefault();
+				});
+			});
+
+			function getValidUrl(url) {
+				var videoid = url.match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/);
+				if(videoid != null) {
+					return videoid[1];
+				} else { 
+					return false;
+				}
+			}
+
+			function convertVideo(videoId) {
+				$.getJSON('/metadata/' + videoId, function(data) {
+					console.log(data);
+					for(var metadata in data.metadata) {
+						console.log(metadata);
+						addMetadataToList(
+							data.metadata[metadata].title, 
+							data.metadata[metadata].artist, 
+							data.metadata[metadata].album, 
+							data.metadata[metadata].cover
+						);
+					}
+					setMetadataForm(
+						data.metadata[0].title,
+						data.metadata[0].artist,
+						data.metadata[0].album,
+						data.metadata[0].cover	
+					);
+					$("#download-form").attr("action", data.download);
+					$($(".list-metadata").children()[0]).find(".badge").html('<i class="fa fa-check"></i>');
+					$("#step2").slideDown(function() {
+						$(".btn-convert").html("Convert Track");
+						$(".btn-convert").removeClass("disabled");
+						$(".youtube-url").removeClass("disabled");
+					});
+				});	
+			}
+			
+			function setMetadataForm(title, artist, album, cover) {
+				$(".metadata-title").val(title);
+				$(".metadata-album").val(album);
+				$(".metadata-artist").val(artist);
+				$(".metadata-cover").val(cover);
+				$(".metadata-cover-field").val(cover);
+				$(".metadata-cover").attr('src', cover);
+			}
+			
+			function addMetadataToList(title, artist, album, cover) {
+				titlePretty = title.length <= 0 ? "<i>No Title</i>" : title;
+				artistPretty = artist.length <= 0 ? "<i>No Artist</i>" : artist;
+				albumPretty = album.length <= 0 ? "<i>No Album Name</i>" : album;
+				$(".list-metadata").append('<a href="#" class="list-group-item" data-title="' + title + '" data-artist="' + artist + '" data-album="' + album + '" data-cover="' + cover + '"><img class="metadata-cover-thumb col-md-2 col-sm-2 col-xs-2" src="' + cover + '"><p class="col-md-8 col-sm-8 col-xs-8"><strong>' + titlePretty + '</strong><br/>' + artistPretty + ' - ' + albumPretty + '</p><span class="badge"></span><div class="clearfix"></div></a>');	
+			}
+			
+			
+
+
+		</script>
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+									})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+			ga('create', 'UA-55031959-5', 'auto');
+			ga('send', 'pageview');
+
+		</script>
+	</body>
+</html>
